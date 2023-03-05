@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "Define tu Secret Key aqui"
+SECRET_KEY = 'Pon tu clave secreta aqui'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -124,3 +124,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# LOGIN URL
+LOGIN_URL = '/login' # Cuando un usuario no eta autenticado, le redirige a /login
+
+# LICENSES
+LICENSES = (
+    ('QUE', 'Quentin Tarantino'),
+    ('DSH', 'Dr. Schutlz')
+)
+
+# BADWORDS http://goo.gl./G2nCu7
+PROJECT_BADWORDS = ['Abollao', 'Abrazafarolas', 'Afilasables', 'Analfabestia', 'Apollardao', 'Arrastramantas', 'Arrollapastos', 'Asaltapozos', 'Caracartón']

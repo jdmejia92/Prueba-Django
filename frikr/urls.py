@@ -23,7 +23,9 @@ urlpatterns = [
 
     # Photos URLS
     path('', views.home, name='photos_home'),
-    path('photos/<pk>', views.detail, name='photo_detail'),
+    path('photo/<pk>', views.detail, name='photo_detail'),
+    path('photos/new', views.create, name='create_photo'),
+
 
     # Users URLS
     path('login', user_view.login, name='users_login'),
