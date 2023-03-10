@@ -18,7 +18,7 @@ from django.urls import path
 from photos import views
 from users import views as user_view
 
-from photos.views import HomeView, DetailView, CreateView
+from photos.views import HomeView, DetailView, CreateView, ListView
 from users.views import LoginView, LogoutView
 
 urlpatterns = [
@@ -26,6 +26,7 @@ urlpatterns = [
 
     # Photos URLS
     path('', HomeView.as_view(), name='photos_home'),
+    path('photos/', ListView.as_view(), name='photos_list'),
     path('photo/<pk>', DetailView.as_view(), name='photo_detail'),
     path('photos/new', CreateView.as_view(), name='create_photo'),
 
