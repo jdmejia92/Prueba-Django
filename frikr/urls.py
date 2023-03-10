@@ -18,16 +18,19 @@ from django.urls import path
 from photos import views
 from users import views as user_view
 
+from photos.views import HomeView, DetailView, CreateView
+from users.views import LoginView, LogoutView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Photos URLS
-    path('', views.home, name='photos_home'),
-    path('photo/<pk>', views.detail, name='photo_detail'),
-    path('photos/new', views.create, name='create_photo'),
+    path('', HomeView.as_view(), name='photos_home'),
+    path('photo/<pk>', DetailView.as_view(), name='photo_detail'),
+    path('photos/new', CreateView.as_view(), name='create_photo'),
 
 
     # Users URLS
-    path('login', user_view.login, name='users_login'),
-    path('logout', user_view.logout, name='users_logout')
+    path('login', LoginView.as_view(), name='users_login'),
+    path('logout', LogoutView.as_view(), name='users_logout')
 ]

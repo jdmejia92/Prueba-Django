@@ -4,60 +4,77 @@ from photos.models import Photo, PUBLIC
 from photos.forms import PhotoForms
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.views.generic import View
+from django.utils.decorators import method_decorator
 
 # Create your views here.
 
-@login_required()
-def home(request):
-    """
-    Esta función devuelve el home de mi página
-    """
-    photos = Photo.objects.filter(visibility=PUBLIC).order_by('-created_at')
-    context = {
-        'photos_list': photos[:5]
-    }
-    return render(request, 'photos/home.html', context)
+class HomeView(View):
 
-@login_required()
-def detail(request, pk):
-    """
-    Carga la página de detalle de una foto
-    :param request: HttpRequest
-    :param pk: id de la foto
-    :return: HttpResponse
-    """
-    
-    """ 
-    También podemos utilizar esta sintaxis de recuperación de un objeto:
-    try: 
-        photo = Photo.objects.get(pk=pk)
-    except Photo.DoesNotExist:
-        photo = None
-    except Photo.MultipleObjectsReturned:
-        photo = None """
-    
-    possible_photo = Photo.objects.filter(pk=pk)
-    photo = possible_photo[0] if len(possible_photo) == 1 else None
-    if photo is not None:
-        #Cargar plantilla de detalle
+    def get(self, request):
+        """
+        Esta función devuelve el home de mi página
+        """
+        photos = Photo.objects.filter(visibility=PUBLIC).order_by('-created_at')
         context = {
-            'photo': photo
+            'photos_list': photos[:5]
         }
-        return render(request, 'photos/detail.html', context)
-    else:
-        return HttpResponseNotFound('No existe la foto')
+        return render(request, 'photos/home.html', context)
 
-@login_required()
-def create(request):
-    """
-    Muestra un formulario para crear una foto y la crea si la petición es POST
-    :param request: HttpRequest
-    :return: HttpResponse
-    """
-    success_message = ''
-    if request.method == 'GET':
+class DetailView(View):
+    def get(self, request, pk):
+        """
+        Carga la página de detalle de una foto
+        :param request: HttpRequest
+        :param pk: id de la foto
+        :return: HttpResponse
+        """
+        
+        """ 
+        También podemos utilizar esta sintaxis de recuperación de un objeto:
+        try: 
+            photo = Photo.objects.get(pk=pk)
+        except Photo.DoesNotExist:
+            photo = None
+        except Photo.MultipleObjectsReturned:
+            photo = None """
+        
+        possible_photo = Photo.objects.filter(pk=pk).select_related('owner')
+        photo = possible_photo[0] if len(possible_photo) == 1 else None
+        if photo is not None:
+            #Cargar plantilla de detalle
+            context = {
+                'photo': photo
+            }
+            return render(request, 'photos/detail.html', context)
+        else:
+            return HttpResponseNotFound('No existe la foto')
+
+
+class CreateView(View):
+
+    @method_decorator(login_required())
+    def get(self, request):
+        """
+        Muestra un formulario para crear una foto
+        :param request: HttpRequest
+        :return: HttpResponse
+        """
         form = PhotoForms()
-    else:
+        context = {
+            'form': form,
+            'success_message': ''
+        }
+        return render(request, 'photos/new_photo.html', context)
+    
+    @method_decorator(login_required())
+    def post(self, request):
+        """
+        Crea una foto en vase a la información POST
+        :param request: HttpRequest
+        :return: HttpResponse
+        """
+        success_message = ''
         photo_with_owner = Photo()
         photo_with_owner.owner = request.user # asigno como propietario de la foto, al usuario autenticado
         form = PhotoForms(request.POST, instance=photo_with_owner)
@@ -68,8 +85,9 @@ def create(request):
             success_message += '<a href="{0}">'.format(reverse('photo_detail', args=[new_photo.pk]))
             success_message += "|Ver foto"
             success_message += '</a>'
-    context = {
-        'form': form,
-        'success_message': success_message
-    }
-    return render(request, 'photos/new_photo.html', context)
+        context = {
+            'form': form,
+            'success_message': success_message
+        }
+        return render(request, 'photos/new_photo.html', context)
+
