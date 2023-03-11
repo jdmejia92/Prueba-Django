@@ -1,5 +1,6 @@
 Usuario Django prueba.txt
 .vscode/
 __pycache__/
+frikr/__pycache__/
 frikr/settings.py
 venv/
