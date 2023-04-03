@@ -1,4 +1,5 @@
 from django.db import models
+from photos.validators import badwords_detector
 from django.contrib.auth.models import User
 from photos.settings import LICENSES
 
@@ -15,7 +16,7 @@ class Photo(models.Model):
     owner = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     name = models.CharField(max_length=150)
     url = models.URLField()
-    description = models.TextField(blank=True, default="")
+    description = models.TextField(blank=True, default="", validators=[badwords_detector])
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     license = models.CharField(max_length=3, choices=LICENSES)

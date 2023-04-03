@@ -137,3 +137,10 @@ LICENSES = (
 
 # BADWORDS http://goo.gl./G2nCu7
 PROJECT_BADWORDS = ['Abollao', 'Abrazafarolas', 'Afilasables', 'Analfabestia', 'Apollardao', 'Arrastramantas', 'Arrollapastos', 'Asaltapozos', 'Caracartón']
+
+# REST FRAMEWORK SETTINGS
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAINGATION_CLASS': 'rest_framework.pagination.PageNumber.Pagination',
+    'PAGE_SIZE': 3
+}
