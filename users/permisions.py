@@ -1,5 +1,4 @@
 from rest_framework.permissions import BasePermission
-from users.api import UserDetailAPI
 
 class UserPermission(BasePermission):
 
@@ -9,13 +8,13 @@ class UserPermission(BasePermission):
         permiso para realizar la acción (GET, POST, PUT o DELETE)
         """
         # Si quiere crear un usuario, sea quien sea puede
-        if request.method == "POST":
+        if view.action == 'create':
             return True
         # si no es POST, el superusario siempre puede
         elif request.user.is_superuser:
             return True
         # si es un GET a la vista de detalle, tomo la decisión en has_object_permissions
-        elif isinstance(view, UserDetailAPI):
+        elif view.action in ['retrieve', 'update', 'destroy']:
             return True        
         else:
             # GET a /api/1.0/users/
@@ -27,4 +26,6 @@ class UserPermission(BasePermission):
         permiso para realizar la acción (GET, POST, PUT o DELETE)
         sobre el object obj
         """
-        pass
+        # Si es superadmin, o el usuario autenticado intenta
+        # hacer GET, PUT o DELETE sobre su mismo perfil
+        return request.user.is_superuser or request.user == obj
